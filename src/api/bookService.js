@@ -24,7 +24,7 @@ export const getBookById = async (id) => {
 
 export const updateBook = async (id, data) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}`, data);
+    const response = await axios.put(`${API_BASE_URL}/${id}`, data);
     if (response.data && response.data.isSuccess) {
       return response.data.data;
     }
