@@ -13,7 +13,8 @@ import Form from "react-bootstrap/Form";
 
 const Content = () => {
   const [books, setItems] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [currentBook, setCurrentBook] = useState(null); // Holds the book being edited
   const [formData, setFormData] = useState({}); // Holds the form values
   const handleClose = () => {
@@ -48,7 +49,16 @@ const Content = () => {
       }
       setCurrentBook(book);
       setFormData(book);
-      setIsModalOpen(true);
+      setEditModalOpen(true);
+    } catch (e) {
+      console.error(`unexpected error occured`, e);
+    }
+  };
+  const handleCreateClicked = async () => {
+    try {
+      setCurrentBook({});
+      setFormData({});
+      setCreateModalOpen(true);
     } catch (e) {
       console.error(`unexpected error occured`, e);
     }
@@ -71,12 +81,33 @@ const Content = () => {
             book._id === currentBook._id ? { ...book, ...formData } : book
           )
         );
-        setIsModalOpen(false); // Close the modal
+        setEditModalOpen(false); // Close the modal
       } else {
         alert(`The edit is not saved`);
       }
     } catch (e) {
       alert(`The edit is not saved`);
+      console.error("Failed to update book:", e);
+    }
+  };
+
+  // Submit updated book details
+  const handleCreate = async () => {
+    try {
+      const result = await createNewBook(formData);
+      // Push book to state
+      if (result) {
+        // Why push doesn't work?
+        // push is not mutating the array hence not observed by React State,
+        // a new array is created and "replaced" to let react state act
+        setItems((booksArr) => [...booksArr, result]);
+        setCreateModalOpen(false); // Close the modal
+        alert("The new book is created");
+      } else {
+        alert(`The new book is not saved`);
+      }
+    } catch (e) {
+      alert(`The new book is not saved, ${e}`);
       console.error("Failed to update book:", e);
     }
   };
@@ -100,6 +131,11 @@ const Content = () => {
     <>
       <div>
         <h1 className="text-2xl font-bold mb-4">Books</h1>
+        <hr />
+        <Button variant="success" onClick={() => handleCreateClicked()}>
+          Add New Book
+        </Button>
+        <br />
         <Table striped bordered hover size="sm">
           <thead key="thead">
             <tr key="table_header">
@@ -149,7 +185,7 @@ const Content = () => {
         <Modal
           backdrop="static"
           keyboard={false}
-          show={isModalOpen}
+          show={editModalOpen}
           onHide={handleClose}
         >
           <Modal.Header closeButton>
@@ -185,11 +221,56 @@ const Content = () => {
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
+            <Button variant="warning" onClick={() => setEditModalOpen(false)}>
               Close
             </Button>
             <Button variant="primary" onClick={handleSave}>
               Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+
+      {currentBook && (
+        <Modal
+          backdrop="static"
+          keyboard={false}
+          show={createModalOpen}
+          onHide={handleClose}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              Create Book {formData.name ? `: ${formData.name}` : ""}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              {fields.map((field) => (
+                <Form.Group
+                  controlId={`form_${field.field}`}
+                  key={`group_${field.field}`}
+                >
+                  <Form.Label key={`label_${field.field}`}>
+                    {field.label}
+                  </Form.Label>
+
+                  <Form.Control
+                    type={field.type ? field.type : "text"}
+                    name={field.field}
+                    value={formData[field.field] || ""}
+                    onChange={handleInputChange}
+                    placeholder={`Enter ${field.label}`}
+                  />
+                </Form.Group>
+              ))}
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="warning" onClick={() => setCreateModalOpen(false)}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleCreate}>
+              Create Book
             </Button>
           </Modal.Footer>
         </Modal>

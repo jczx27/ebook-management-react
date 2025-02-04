@@ -39,6 +39,13 @@ export const createNewBook = async (data) => {
       return response.data.data;
     }
   } catch (e) {
+    if (
+      e.status === 406 &&
+      e.response.data.msg &&
+      /is required/.test(e.response.data.msg)
+    ) {
+      throw new Error("Some fields are required");
+    }
     return null;
   }
 };
