@@ -1,0 +1,23 @@
+## AVOID CHANGING THIS FILE
+### IF YOU MADE CHANGES HERE, NAVIGATE HERE IN TERMINAL AND RUN
+### kubectl apply -f deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ebook-management-react-maybank:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80

@@ -64,7 +64,7 @@ If you wish to know more about how to setup/ remove, [<visit the source repo>](h
 
 Congratulations on coming this far, now seems you've been fully setup, let's prepare to run the program.
 
-## wait! Last check
+## Wait! Last check
 
 Before you run the app, note that the default `.env` at this repo sets the port to `3001`, please make sure no other program runs on port `3001`, or if you have to change the port, you may edit on the `.env` in the repo you cloned.
 
@@ -83,6 +83,11 @@ Compiled successfully!<br/>
 webpack compiled successfully<br/></code>
 
 If not, kindly refer to above [steps](#setup) to check if any steps' missing.
+
+## Local Deployment
+
+> [!INFORMATION]
+> As the setup guide and core `.yaml` file was with backend, please check the same named section at [backend](https://github.com/jczx27/ebook-management-nodejs-maybank)
 
 # Quizzes time
 
